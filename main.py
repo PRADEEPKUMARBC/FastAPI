@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Path
+from fastapi import FastAPI, HTTPException, Path, Query
 import json
 app = FastAPI()
 
@@ -40,9 +40,16 @@ http://127.0.0.1:8000:8000/
 """
 
 @app.get('/filter')
-def filter_student(course : str):
+def filter_student(course : str = Query(None, description="Show only students in a specific course", examples=["Python"])):
 #course=Python
     data = load_data()
 
     if course not in data:
         return data
+        
+    filtered = {}
+    for student_id, student_info in data.items():
+        if student_info["course"].lower() == course.lower():
+            filtered[student_id] = student_info
+
+    return filtered
