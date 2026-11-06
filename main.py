@@ -33,3 +33,16 @@ def get_student(student_id: str = Path(..., description="The ID of the student t
             detail="Student with ID {student_id} not found"
         )
     return data[student_id]
+
+
+"""
+http://127.0.0.1:8000:8000/
+"""
+
+@app.get('/filter')
+def filter_student(course : str):
+#course=Python
+    data = load_data()
+
+    if course not in data:
+        return data
