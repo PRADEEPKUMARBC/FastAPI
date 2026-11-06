@@ -15,12 +15,16 @@ def greet():
 def hello():
     return "This is Hello page from FastAPI"
 
-def get_data():
+def load_data():
     with open("student.json", "r") as file:
         return json.load(file)
 
 @app.get("/students")
 def get_students():
-    data = get_data()
+    data = load_data()
     return data
 
+@app.get("/students/{student_id}")
+def get_student(student_id: str):
+    data = load_data()
+    return data[student_id]
