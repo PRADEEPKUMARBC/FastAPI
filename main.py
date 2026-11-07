@@ -88,3 +88,5 @@ def sort_students(
     sorted_students = sorted(student, key=lambda x: x[sort_by], reverse=reverse)
 
     return sorted_students
+
+# this is the sorted student list by the choosen field and order
