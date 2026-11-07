@@ -36,11 +36,17 @@ def get_student(student_id: str = Path(..., description="The ID of the student t
 
 
 """
-http://127.0.0.1:8000:8000/
+QUERY-PARAMETERS :
+http://127.0.0.1:8000:8000/filter?course=Python
+? -> after this our query present 
+course = python -> this is key value pair
+
 """
 
 @app.get('/filter')
-def filter_student(course : str = Query(None, description="Show only students in a specific course", examples=["Python"])):
+def filter_student(course : str = 
+                Query(None, description="Show only students in a specific course", 
+                    examples=["Python"])):
 #course=Python
     data = load_data()
 
@@ -53,3 +59,32 @@ def filter_student(course : str = Query(None, description="Show only students in
             filtered[student_id] = student_info
 
     return filtered
+
+# http://127.0.0.1:8000/sort?sort_by=marks,age,name&order=asc,desc
+
+SORT_FIELDS = ["marks", "age", "name"]
+SORT_ORDER = ["asc", "desc"]
+
+@app.get('/sort')
+def sort_students(
+    sort_by : str = Query(None, description="Sort by marks, name, age", examples=["marks"]),
+    order : str = Query(None, description="Sort order asc or desc", examples=["asc", "desc"])
+):
+    if sort_by not in SORT_FIELDS:
+        raise HTTPException(status_code=404, detail=f"Invalid sort_by '{sort_by}', Choose from {SORT_FIELDS} ")
+
+    if order not in SORT_ORDER:
+        raise HTTPException(status_code=404, detail=f"Invalid order '{order}', Choose from {SORT_ORDER} ")  
+
+    data = load_data()
+
+    student = []
+    for student_id, student_info in data.items():
+        student_info["id"] = student_id
+        student.append(student_info)
+
+    # step - 2 Sort the list by the choosen field and order
+    reverse = (order == "desc")
+    sorted_students = sorted(student, key=lambda x: x[sort_by], reverse=reverse)
+
+    return sorted_students
